@@ -108,10 +108,11 @@ class TrafficCount:
     def process_frame(self, car_count, detected, subtractor, frame):
         grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # 将帧转换为灰度图像
         blur = cv2.GaussianBlur(grey, (3, 3), 5)  # 对灰度图像进行高斯模糊
-        img_sub = subtractor.apply(blur)  # 应用背景减法器，提取前景
-        dilat = cv2.dilate(img_sub, np.ones((5, 5)))  # 对前景图像进行膨胀操作
+        mask = subtractor.apply(blur)  # 应用背景减法器，提取前景
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-        dilatada = cv2.morphologyEx(dilat, cv2.MORPH_CLOSE, kernel)
+        erode = cv2.erode(mask, kernel)
+        dilate = cv2.dilate(erode, kernel, iterations=3)
+        dilatada = cv2.morphologyEx(dilate, cv2.MORPH_CLOSE, kernel)
         dilatada = cv2.morphologyEx(dilatada, cv2.MORPH_CLOSE, kernel)
         contorno, h = cv2.findContours(dilatada, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 

@@ -72,4 +72,4 @@ with gr.Blocks(title="Auto Traffic Count") as demo:
         )
 
 
-demo.launch(share=True)
+demo.launch()
